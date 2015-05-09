@@ -81,6 +81,7 @@ fi
 : ${VCSH_GITIGNORE:=exact}
 : ${VCSH_GITATTRIBUTES:=none}
 : ${VCSH_WORKTREE:=absolute}
+: ${VCSH_GLOBAL_IGNORE:="$XDG_CONFIG_HOME/vcsh/ignore"}
 
 if [ ! "x$VCSH_GITIGNORE" = 'xexact' ] && [ ! "x$VCSH_GITIGNORE" = 'xnone' ] && [ ! "x$VCSH_GITIGNORE" = 'xrecursive' ]; then
 	fatal "'\$VCSH_GITIGNORE' must equal 'exact', 'none', or 'recursive'" 1
@@ -300,7 +301,7 @@ list_untracked() {
 
 list_untracked_helper() {
 	export GIT_DIR="$VCSH_REPO_D/$VCSH_REPO_NAME.git"
-	git ls-files --others "$directory_opt" | (
+	git ls-files --exclude-from="$VCSH_GLOBAL_IGNORE" --others "$directory_opt" | (
 		while read line; do
 			echo "$line"
 			directory_component=${line%%/*}
